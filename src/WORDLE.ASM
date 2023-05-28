@@ -44,6 +44,7 @@ guesses         DB              5 dup(?)
 letterState     DB              26 dup(?)
 
 
+
 ; -------------------------- CODE SEGMENT -----------------------------
 
                 CODESEG                         ; Code segment IDEAL directive
@@ -55,24 +56,65 @@ letterState     DB              26 dup(?)
 PROC MAIN
 
                 MOV             AX, @DATA       ; mov dataseg to ax
-                MOV             DS, AX          ; mov the ax content to ds
+                MOV             DS, AX          ; mov the ax content to dsW
 
-                CALL            readUserInput   ; Call user input proc
+                CALL            drawBorder      ; Call Border drawer routine
 
-                LEA             DX, [input]     ; Load input to DX
-                MOV             AH, 9           ; DOS Function: display str
-                INT             21h             ; Run DOS interrupt
-
-exit:           MOV             AX, 4C00h       ; DOS Function: Terminate
+exit:           
+                MOV             AX, 4C00h       ; DOS Function: Terminate
                 INT             21h             ; Run DOS interrupt
 ENDP
 
 
+PROC drawBorder
+                CALL            clearScreen
 
+                MOV             DX, 0200h       ; Set cursor to upper left
+                CALL            setCursor
+                CALL            printBorder 
 
+                MOV             DX, 1800h       ; setCursor to Lower left
+                CALL            setCursor       ; Call setCursor subroutine
+                CALL            printBorder    
 
+                RET
+ENDP
 
+PROC clearScreen
+                MOV             AX, 0600h
+                MOV             BH, 07h
+                MOV             CX, 0000h
+                MOV             DX, 184Fh
+                INT             10h
 
+                RET
+ENDP
+
+PROC printBorder
+                MOV             AH, 09h
+                MOV             AL, '='
+                MOV             BH, 0
+                MOV             BL, 07h
+                MOV             CX, 80
+                INT             10h
+
+                RET
+ENDP
+
+; --  setCursor PROCEDURE  --
+; DESC:         Set the cursor to the program
+; INPUT:        DH: The row of cursor
+;               DL: the column
+; RETURN        NONE
+PROC setCursor
+                PUSH            BX         ; Save the value of BX register
+                MOV             BH, 00h
+                MOV             AH, 02h
+                INT             10h
+                POP             BX         ; Restore the value of BX register
+
+                RET
+ENDP
 
 
 ; -- readUserInput Procedure --
@@ -97,7 +139,7 @@ readLoop:
                 JNZ             readLoop        ; JMP readLoop if CX != 0
                 
 saveInput:               
-                MOV             [input+5], '$'       ; Add the null-term to buffer
+                MOV             [input+5], '$'  ; Add the null-term to buffer
 
                 RET                             ; Return from procedure
 
