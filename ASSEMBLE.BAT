@@ -1,13 +1,13 @@
 @echo off
 cls
 
-
+cd src/
 
 set SOURCE_FILE=WORDLE.asm
 set OBJECT_FILE=WORDLE.obj
 
 echo Assembling %SOURCE_FILE%...
-tasm /z /zi  src\%SOURCE_FILE%
+tasm /z /zi  %SOURCE_FILE%
 
 if errorlevel 1 goto AssemblyFailed
 
@@ -17,6 +17,13 @@ tlink /v %OBJECT_FILE%
 if errorlevel 1 goto LinkingFailed
 
 echo Assembly and linking completed successfully.
+echo Copying the EXE file...
+copy WORDLE.EXE ..\WORDLE.EXE
+echo Cleaning generated files...
+del *.obj
+del *.map
+del *.bak
+del *.exe
 goto End
 
 :NoSourceFile
@@ -33,4 +40,5 @@ echo Linking failed!
 goto End
 
 :End
+cd ..
 pause
