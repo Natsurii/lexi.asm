@@ -7,7 +7,7 @@ set SOURCE_FILE=WORDLE.asm
 set OBJECT_FILE=WORDLE.obj
 
 echo Assembling %SOURCE_FILE%...
-tasm /z /zi  %SOURCE_FILE%
+tasm /z /zi  %SOURCE_FILE% > stdout.txt
 
 if errorlevel 1 goto AssemblyFailed
 

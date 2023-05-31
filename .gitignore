@@ -2,3 +2,4 @@
 *.obj
 *.map
 *.exe
+STDOUT.TXT

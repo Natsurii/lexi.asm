@@ -33,6 +33,7 @@ ENDP
 ;               CX: How many times you want to print
 ; RETURN        N/a
 PROC printHorizontalLine
+                CALL            setCursor           ; Set the cursor from input
                 MOV             AH, 09h             ; DOS Function: print char
                 MOV             BH, 0               ; on page 0
                 MOV             BL, 07h             ; White text on black
