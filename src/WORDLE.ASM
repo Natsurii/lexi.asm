@@ -30,20 +30,8 @@
 ; ----------------------------- HEADER --------------------------------
 
                 IDEAL                           ; Set IDEAL mode (strict type)
-                MODEL           SMALL           ; Model = small (near, near)
+                MODEL           COMPACT         ; CODE < 64k, DATA >= 64K
                 STACK           100h            ; Set stack to 100h
-
-; ---------------------------- DATA SEGMENT ---------------------------
-
-                DATASEG                         ; Data segment IDEAL directive
-
-attempts        DB              6
-input           DB              6 dup(?)        ; Input buffer + null-term
-secretWord      DB              'MEALS'         ; Temporary secret word
-guesses         DB              5 dup(?)
-letterState     DB              26 dup(?)
-
-
 ; -------------------------- CODE SEGMENT -----------------------------
 
                 CODESEG                         ; Code segment IDEAL directive
@@ -57,14 +45,13 @@ PROC MAIN
                 MOV             AX, @DATA       ; mov dataseg to ax
                 MOV             DS, AX          ; mov the ax content to dsW
 
-                CALL            drawUI
+                ; CALL            drawUI
                 CALL            gameLogic  
 
 exit:           
                 MOV             AX, 4C00h       ; DOS Function: Terminate
                 INT             21h             ; Run DOS interrupt
 ENDP
-
 
                 INCLUDE "UI.ASM"
                 INCLUDE "LOGIC.ASM"

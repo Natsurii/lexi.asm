@@ -12,12 +12,6 @@ asciiArt        DB              "                                               
 
 
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
-
-equalSign       DB              "=", "$"
-
-attemptLabel    DB              'Attempts Left: ', '$'
-usedLetLabel    DB              'Used letters:', '$'
-
 ; -------------------------- CODE SEGMENT -----------------------------
 
                 CODESEG
@@ -28,14 +22,14 @@ PROC drawUI
                                
                 CALL            displayASCII
                 CALL            drawBorder
-
                 CALL            waitForKeypress
 
+                
                 CALL            clearScreen
                 CALL            drawBorder
                 CALL            displayGameArea
 
-                CALL            waitForKeypress
+
                 
                 
                 RET
