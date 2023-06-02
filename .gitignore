@@ -3,3 +3,5 @@
 *.map
 *.exe
 STDOUT.TXT
+*.TR
+*.TD
