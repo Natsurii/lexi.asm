@@ -71,9 +71,10 @@ readLoop:
 saveInput:
             MOV             [input+5], '$'      ; Add the null-term to buffer
             
-            POP             SI
-            POP             DI
-            POP             CX                  ; Restore the CX after it ran
-            POP             AX
+            POP             SI                  ; Restore SI
+            POP             DI                  ; Restore DI
+            POP             CX                  ; Restore CX 
+            POP             AX                  ; Restore AX after it ran
             RET                                 ; Return from procedure
 ENDP
+

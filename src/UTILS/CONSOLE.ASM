@@ -15,14 +15,13 @@ ENDP
 ;               DL: the column
 ; RETURN        NONE
 PROC setCursor
-                PUSH            AX
-                PUSH            BX         ; Save the value of BX register
-                MOV             BH, 00h
-                MOV             AH, 02h
-                INT             10h
-                POP             BX         ; Restore the value of BX register
-                POP             AX
-
+                PUSH            AX                  ; Preserve AX
+                PUSH            BX                  ; Save the value of BX register
+                MOV             BH, 00h             ; Set page to 0
+                MOV             AH, 02h             ; DOS Function: set cursor pos
+                INT             10h                 ; Run DOS interrupt
+                POP             BX                  ; Restore the value of BX register
+                POP             AX                  ; Restore AX from stack
                 RET
 ENDP
 
@@ -31,6 +30,7 @@ ENDP
 ; DESC:         Populate '=' in the given row
 ; INPUT:        AL: The character you want to print
 ;               CX: How many times you want to print
+;               DX: cursor Location
 ; RETURN        N/a
 PROC printHorizontalLine
                 CALL            setCursor           ; Set the cursor from input
@@ -57,7 +57,20 @@ PRINT_LOOP:
                 INT             21h                 ; Run DOS interrupt
                 POP             DX                  ; Restore cursor position
                 INC             DH                  ; Increment row
-                LOOP            PRINT_LOOP
+                LOOP            PRINT_LOOP          ; Loop until CX = 0
 
                 RET
+ENDP
+
+; -- printCharAttrib PROCEDURE  --
+; DESC:         print the character with the attribute
+; INPUT:        AL: The character you want to print
+;               BL: The color attribute
+; RETURN        N/a
+PROC printCharAttrib
+                CALL            setCursor           ; Set the cursor from input
+                MOV             AH, 09h             ; DOS Function: print char
+                MOV             CX, 1               ; Print only 1 time
+                MOV             BH, 0               ; on page 0
+                INT             10h                 ; Run DOS interrupt
 ENDP
