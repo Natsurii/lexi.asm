@@ -3,8 +3,8 @@ cls
 
 cd src/
 
-set SOURCE_FILE=WORDLE.asm
-set OBJECT_FILE=WORDLE.obj
+set SOURCE_FILE=LEXI.asm
+set OBJECT_FILE=LEXI.obj
 
 echo Assembling %SOURCE_FILE%...
 tasm /z /zi  %SOURCE_FILE% > stdout.txt
