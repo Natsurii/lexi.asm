@@ -3,8 +3,8 @@
                 DATASEG                             ; Data segment IDEAL directive
 
 correctLettersCount DW 0                            ; Correct word counter
-input           DB              5 dup(?)            ; Input buffer + null-term
-secretWord      DB              'MEALS','$',0       ; Temporary secret word
+input           DB              5 dup(?), '$'       ; Input buffer + null-term
+secretWord      DB              'MEALS','$'         ; Temporary secret word
 matchColor      DB 0Ah                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
 inputPosition   DW 1026h                            ; Row 16, Column 38
