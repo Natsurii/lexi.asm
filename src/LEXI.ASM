@@ -1,10 +1,10 @@
 ; ----------------------------------------------------------------------
-%TITLE "Wordle: Guess the 5 letter word within 6 tries"
+%TITLE "LEXI: Guess the 5 letter word within 10 tries"
 ;AUTHOR:                Natsurii
 ;CREATION DATE:         2023/05/27
-;LAST MODIFIED:         2023/05/28
+;LAST MODIFIED:         2023/06/06
 ;TODO:
-;               [ ] Wordle data structure
+;               [ ] Lexi data structure
 ;                       [/] Word bank array
 ;                       [/] current secret word
 ;                       [/] correct letter count
