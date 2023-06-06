@@ -18,7 +18,7 @@ if errorlevel 1 goto LinkingFailed
 
 echo Assembly and linking completed successfully.
 echo Copying the EXE file...
-copy WORDLE.EXE ..\WORDLE.EXE
+copy LEXI.EXE ..\LEXI.EXE
 echo Cleaning generated files...
 del *.obj
 del *.map
