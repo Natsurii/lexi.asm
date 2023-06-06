@@ -4,13 +4,16 @@
 
 correctLettersCount DW 0                            ; Correct word counter
 input           DB              5 dup(?), '$'       ; Input buffer + null-term
-secretWord      DB              'MEALS','$'         ; Temporary secret word
+secretWord      DB              6 dup(?), '$',      ; Temporary secret word
 matchColor      DB 0Ah                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
-inputPosition   DW 1026h                            ; Row 16, Column 38
+inputPosition   DW 1020h                            ; Row 16, Column 16
+userLvlChoice   DW 2002         
 ; ---------------------------- CODE SEGMENT ---------------------------
  
                 CODESEG
+
+
 ; -- gameLogic PROCEDURE --
 ; DESC:         This is where the game logic happens
 ; INPUT:        N/a
@@ -26,6 +29,7 @@ ENDP
 ;               DL: The column
 ; RETURN:       N/a
 PROC userInputLoop  
+                CALL        getWordFromChoice
 inputLoop:
                 MOV         DX, [inputPosition]     ; setCursor to (16,38)
                 CALL        setCursor               ; move cursor
@@ -38,7 +42,7 @@ inputLoop:
                 ; if all letters matched, exit loop
                 MOV         AX, [correctLettersCount]; AX = correctLettersCount
                 CMP         AX, 5                   ; AX == 5? exit loop: continue loop
-                JNZ         inputLoop
+                JNZ         inputLoop               ; Jump input loop if matched < 5
 
     RET
 ENDP
@@ -92,10 +96,51 @@ ENDP
 ;               secretWord DB(5)
 ; RETURN:       NONE
 PROC incrementCorrectLetters
-                PUSH AX                             ; Preserve data of AX
-                MOV AX, [correctLettersCount]       ; AX = correctLettersCount
-                INC AX                              ; AX = AX + 1
-                MOV [correctLettersCount], AX       ; Store updated correctLettersCount
-                POP AX                              ; Restore previous value of AX
+                PUSH        AX                      ; Preserve data of AX
+                MOV         AX,[correctLettersCount]; AX = correctLettersCount
+                INC         AX                      ; AX = AX + 1
+                MOV         [correctLettersCount],AX; Store updated correctLettersCount
+                POP         AX                      ; Restore previous value of AX
                 RET
 ENDP
+
+; -- getWordFromChoice PROCEDURE -- 
+; DESC:         Get the string from the ARRAY based on the userLvlChoice index 
+; INPUT:        userLvlChoice DW (index) 
+; OUTPUT:       secretWord DB(5) - The chosen string without the separator 
+; RETURN:       NONE
+PROC getWordFromChoice
+                PUSH        SI                      ; Preserve SI,
+                PUSH        DI                      ; DI,
+                PUSH        AX                      ; AX,
+                PUSH        CX                      ; CX values to STACk
+                XOR         AX, AX                  ; Flush the value of AX
+                XOR         SI, SI                  ; and SI
+                LEA         SI, [ARRAY]             ; Load effective address offset
+                MOV         AX, [userLvlChoice]     ; Move user input to AX
+
+                MOV         CX, 6                   ; each string has 5char + 1sep
+                IMUL        CX                      ; Offset = AX * 6
+                ADD         SI, AX                  ; Add SI to AX before addresaing
+                LEA         DI, [secretWord]        ; init DI to point secretWord
+
+; Copy the string from ARRAY to secretWord until the separator is encountered
+CopyString:
+                MOV         AL, [SI]                ; Move a character from ARRAY to AL
+                CMP         AL, '$'                 ; Compare AL with the separator character
+                JE          EndOfString             ; If it's the separator, jump to EndOfString
+                MOV         [DI], AL                ; Move the character from AL to secretWord
+                INC         SI                      ; Increment SI to point to the next character in ARRAY
+                INC         DI                      ; Increment DI to point to the next character location in secretWord
+                JMP         CopyString              ; Jump back to CopyString to continue copying
+EndOfString:
+                MOV         [DI], 0                 ; Add a null terminator to the secretWord
+
+                POP         CX                      ; Retrieve CX,
+                POP         AX                      ; AX,
+                POP         DI                      ; DI,
+                POP         SI                      ; SI values from STACK
+                RET
+ENDP
+
+; ------------------------------- EOF ----------------------------------
