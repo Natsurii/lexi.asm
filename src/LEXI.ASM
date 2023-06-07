@@ -43,6 +43,10 @@ PROC MAIN
                 MOV             AX, @DATA       ; mov dataseg to ax
                 MOV             DS, AX          ; mov the ax content to dsW
 
+                MOV             AH, 00H         ; Video function: set video mode
+                MOV             AL, 03H         ; 80x25 text mode
+                INT             10h             ; Run video interrupt
+
                 CALL            drawUI          ; Draw the UI
                 CALL            gameLogic       ; Initialize the game logic
 
