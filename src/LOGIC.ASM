@@ -4,11 +4,22 @@
 
 correctLettersCount DW 0                            ; Correct word counter
 input           DB              5 dup(?), '$'       ; Input buffer + null-term
-secretWord      DB              6 dup(?), '$',      ; Temporary secret word
+inputBuffer     DB              6,?,6 dup ('$')     ; Buffer to store the user input; Buffer to store user input (max 4 digits + CR)
+secretWord      DB              6 dup(?), '$'       ; Temporary secret word
 matchColor      DB 0Ah                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
 inputPosition   DW 1020h                            ; Row 16, Column 16
-userLvlChoice   DW 2002         
+printPosRow     DB 07h          
+printPosCol     DB 3Ch
+
+attemptCount    DB 10
+
+inputMessage    db 13,10,'Enter a decimal integer (1-3100): $'
+errorMessage    db 13,10,'Invalid input! Enter a decimal integer between 1 and 3100: $'
+convertedNumber dw ?                                ; Variable to store the converted decimal number
+printableLvl    DB 6,?,6 dup ('$')
+prntUsrLvlPos   DW 0B26h  
+attemptPos      DW 0C26h                         
 ; ---------------------------- CODE SEGMENT ---------------------------
  
                 CODESEG
@@ -30,15 +41,21 @@ ENDP
 ; RETURN:       N/a
 PROC userInputLoop  
                 CALL        getWordFromChoice
+                CALL        printUserLevel
 inputLoop:
+
                 MOV         DX, [inputPosition]     ; setCursor to (16,38)
                 CALL        setCursor               ; move cursor
                 CALL        readUserInput           ; Read the user input
                 CALL        convertToUppercase      ; convert user input to uppercase
 
-                MOV         DX, [inputPosition]     ; setCursor to (16,38)
+                ; MOV         DX, [inputPosition]   ; setCursor to (16,38)
+                MOV         DH, [printPosRow]
+                MOV         DL, [printPosCol]
                 CALL        compareLetters          ; compare user input to secret word
 
+                INC         DH                      ; Increment the row
+                MOV         [printPosRow], DH       ; save the row new val to the var 
                 ; if all letters matched, exit loop
                 MOV         AX, [correctLettersCount]; AX = correctLettersCount
                 CMP         AX, 5                   ; AX == 5? exit loop: continue loop
@@ -117,7 +134,7 @@ PROC getWordFromChoice
                 XOR         AX, AX                  ; Flush the value of AX
                 XOR         SI, SI                  ; and SI
                 LEA         SI, [ARRAY]             ; Load effective address offset
-                MOV         AX, [userLvlChoice]     ; Move user input to AX
+                MOV         AX, [convertedNumber]   ; Move user input to AX
 
                 MOV         CX, 6                   ; each string has 5char + 1sep
                 IMUL        CX                      ; Offset = AX * 6
@@ -141,6 +158,86 @@ EndOfString:
                 POP         DI                      ; DI,
                 POP         SI                      ; SI values from STACK
                 RET
+ENDP
+
+
+; -- getUserLvlInput PROCEDURE --
+; DESC:         Reads user input, converts it to a decimal number and validates the range
+; INPUT:        N/a
+; RETURN:       Converted number stored in the 'convertedNumber' variable
+PROC getUserLvlInput
+
+startReading:
+                ; Display input message
+                LEA             DX, [inputMessage]
+                MOV             AH, 09h
+                INT             21h
+
+                ; Read user input
+                LEA             DX, [inputBuffer]
+                MOV             AH, 0Ah
+                INT             21h
+
+                MOV AH, [inputBuffer]
+                MOV [printableLvl], AH
+
+
+                ; Convert user input to decimal number
+                MOV             SI, offset inputBuffer + 2; Offset to read the user input after the length byte
+                XOR             AX, AX              ; Clear AX register for conversion
+                XOR             BX, BX              ; also BX
+                XOR             CX, CX              ; CX
+                XOR             DX, DX              ; and DX 
+
+convertDecInpLoop:
+                MOV             BL, [SI]            ; Move the ASCII digit to BL
+                CMP             BL, 0Dh             ; Check if the current character is carriage return
+                JE              convertDecDone      ; If it is, jump to convertDone
+                CMP             BL, 30h             ; Compare with ASCII '0'
+                JL              inputError          ; Invalid input if less than '0'
+                CMP             BL, 39h             ; Compare with ASCII '9'
+                JG              inputError          ; Invalid input if greater than '9'
+                SUB             BL, 30h             ; Convert ASCII digit to numerical value
+                MOV             CX, 10              ; Multiplier for decimal conversion
+                MUL             CX                  ; Multiply current number by 10
+                ADD             AX, BX              ; Add current digit to the total
+                INC             SI                  ; Move to next digit
+                CMP             [SI], '$'           ; Check if reached the end of user input
+                JE              convertDecDone      ; Exit the loop if end marker is reached
+                JMP             convertDecInpLoop   ; Continue the loop if not reached the end
+
+convertDecDone:
+                ; Check if the number is within the valid range
+                CMP             AX, 1
+                JL              inputError
+                CMP             AX, 3100
+                JG              inputError
+
+                ; Save the number into the variable
+                SUB             AX, 1               ; Make it 0-based array index
+                MOV             [convertedNumber],AX; save the 
+                JMP             exitProgram
+
+inputError:
+                ; Display error message
+                LEA             DX, errorMessage
+                MOV             AH, 09h
+                INT             21h
+                JMP             startReading
+
+exitProgram:
+                RET
+ENDP
+
+PROC printUserLevel
+    PUSH DX
+    MOV DX, [prntUsrLvlPos]
+    CALL setCursor
+    MOV DX, OFFSET inputBuffer + 2
+    MOV AH, 09h
+    INT 21h
+    POP DX
+    RET
 ENDP
 
 ; ------------------------------- EOF ----------------------------------

@@ -18,7 +18,7 @@ asciiArt        DB              "                 .---.                         
 
 scrollArt       DB              "                     ______________________________", 10, 13
                 DB              "                   / \                             \.", 10, 13
-                DB              "                  |   |      __           _        |.", 10, 13
+                DB              "                  |   |      __           _        |.    WORD HISTORY:", 10, 13
                 DB              "                   \_ |     / /  _____  _(_)       |.", 10, 13
                 DB              "                      |    / /  / _ \ \/ / |       |.", 10, 13
                 DB              "                      |   / /__|  __/>  <| |       |.", 10, 13
@@ -36,7 +36,7 @@ scrollArt       DB              "                     __________________________
                 DB              "                      |  /                            /.", 10, 13
                 DB              "                      \_/____________________________/.", 10, 13
                 DB              "$"
-                
+               
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
 
 
@@ -56,6 +56,7 @@ PROC drawUI
                 CALL            drawBorder          ; Draw a border around the UI
                 CALL            waitForKeypress     ; Wait for the user to press a key
 
+                CALL            getUserLvlInput
                 CALL            clearScreen         ; Clear the screen
                 CALL            displayGameUI       ; Display the game user interface
                 CALL            drawBorder          ; Draw a border around the game UI
