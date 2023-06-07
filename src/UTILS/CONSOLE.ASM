@@ -6,7 +6,8 @@
 ; INPUT:        N/a
 ; RETURN:       N/a
 PROC clearScreen
-                MOV             AX, 0600h           ; Set AX <- 0600h BIOS function: clear screen
+                MOV             AH, 06h             ; AH=06h Scroll up window
+                MOV             AL, 00h             ; Clear the whole window
                 MOV             BH, 07h             ; Set BH to 07h for text attribute: white on black
                 MOV             CX, 0000h           ; Set CX to 0000h for cursor position: top-left corner
                 MOV             DX, 184Fh           ; Set DX to 184Fh for screen dimensions: 25 rows x 80 columns
