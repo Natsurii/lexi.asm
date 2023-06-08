@@ -1,8 +1,8 @@
 ; ----------------------------------------------------------------------
-%TITLE "LEXI: Guess the 5 letter word within 10 tries"
+%TITLE "LEXIS: Guess the 5 letter word within 10 tries"
 ;AUTHOR:                Natsurii
 ;CREATION DATE:         2023/05/27
-;LAST MODIFIED:         2023/06/06
+;LAST MODIFIED:         2023/06/08
 ;TODO:
 ;               [ ] Lexi data structure
 ;                       [/] Word bank array
