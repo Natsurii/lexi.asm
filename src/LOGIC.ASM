@@ -6,7 +6,7 @@ correctLettersCount DW 0                            ; Correct word counter
 input           DB              5 dup(?), '$'       ; Input buffer + null-term
 inputBuffer     DB              6,?,6 dup ('$')     ; Buffer to store the user input; Buffer to store user input (max 4 digits + CR)
 secretWord      DB              6 dup(?), '$'       ; Temporary secret word
-matchColor      DB 0Ah                              ; Green background color
+matchColor      DB 2Fh                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
 inputPosition   DW 1020h                            ; Row 16, Column 16
 printPosRow     DB 07h          
