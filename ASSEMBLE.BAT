@@ -3,8 +3,8 @@ cls
 
 cd src/
 
-set SOURCE_FILE=LEXI.asm
-set OBJECT_FILE=LEXI.obj
+set SOURCE_FILE=LEXIS.asm
+set OBJECT_FILE=LEXIS.obj
 
 echo Assembling %SOURCE_FILE%...
 tasm /z /zi  %SOURCE_FILE% > stdout.txt
@@ -18,7 +18,7 @@ if errorlevel 1 goto LinkingFailed
 
 echo Assembly and linking completed successfully.
 echo Copying the EXE file...
-copy LEXI.EXE ..\LEXI.EXE
+copy LEXIS.EXE ..\LEXIS.EXE
 echo Cleaning generated files...
 del *.obj
 del *.map
