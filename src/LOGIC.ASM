@@ -12,9 +12,11 @@ inputPosition   DW 1020h                            ; Row 16, Column 16
 printPosRow     DB 07h          
 printPosCol     DB 3Ch
 
-attemptCount    DB 10
+attemptCount    DW 10
+asciiBuffer     DB 3, 0, 3 DUP('$') ; Buffer for the ASCII string: max length, current length, string data
 
-inputMessage    db 13,10,'Enter a decimal integer (1-3100): $'
+
+inputMessage    db 13,10,'Enter a level number (1-3100): $'
 errorMessage    db 13,10,'Invalid input! Enter a decimal integer between 1 and 3100: $'
 convertedNumber dw ?                                ; Variable to store the converted decimal number
 printableLvl    DB 6,?,6 dup ('$')
@@ -42,26 +44,36 @@ ENDP
 PROC userInputLoop  
                 CALL        getWordFromChoice
                 CALL        printUserLevel
-inputLoop:
-
+inputLoop:      
+                CALL        print2DigitDecimal      ; Print number of attempts
                 MOV         DX, [inputPosition]     ; setCursor to (16,38)
                 CALL        setCursor               ; move cursor
                 CALL        readUserInput           ; Read the user input
                 CALL        convertToUppercase      ; convert user input to uppercase
 
-                ; MOV         DX, [inputPosition]   ; setCursor to (16,38)
                 MOV         DH, [printPosRow]
                 MOV         DL, [printPosCol]
                 CALL        compareLetters          ; compare user input to secret word
 
                 INC         DH                      ; Increment the row
                 MOV         [printPosRow], DH       ; save the row new val to the var 
+                
+                CALL        decrementAttempts
+                MOV         AX, [attemptCount]
+                CMP         AX, 0
+                JZ          lose
+
                 ; if all letters matched, exit loop
                 MOV         AX, [correctLettersCount]; AX = correctLettersCount
                 CMP         AX, 5                   ; AX == 5? exit loop: continue loop
                 JNZ         inputLoop               ; Jump input loop if matched < 5
 
-    RET
+win:            
+
+lose:
+
+exitLoop:
+                RET
 ENDP
 
 ; -- compareLetters PROCEDURE --
@@ -240,4 +252,55 @@ PROC printUserLevel
     RET
 ENDP
 
+; -- print2DigitDecimal PROCEDURE --
+; DESC:         Converts a 2-digit decimal number in AX to a printable ASCII string and prints it
+; INPUT:        AX - 2-digit decimal number to be printed
+; RETURN:       N/a
+PROC print2DigitDecimal
+    ; Prepare the buffer for the ASCII string
+    PUSH AX
+    PUSH DX
+    PUSH CX
+
+    MOV AX, [attemptCount]
+    LEA DI, [asciiBuffer]            ; Load the address of asciiBuffer into DI
+    MOV [DI], 2             ; Store the maximum string length at the beginning of the buffer
+    MOV [DI+1], 0           ; Set the current string length to 0
+    ADD DI, 2                        ; Move DI to the start of the string data
+
+    ; Convert the 2-digit decimal number to ASCII string
+    MOV CX, 10                       ; Set the divisor for the conversion
+    XOR DX, DX                       ; Clear DX for division
+    DIV CX                           ; Divide AX by 10: quotient in AX, remainder in DX
+    ADD DX, 30h                      ; Convert the remainder to ASCII
+    MOV [DI+1], DL                   ; Store the ASCII digit in the buffer (second digit)
+    ADD AX, 30h                      ; Convert the quotient to ASCII
+    MOV [DI], AL                     ; Store the ASCII digit in the buffer (first digit)
+
+                MOV             DX, [attemptPos]          ; Set cursor to upper left corner
+                MOV             CX, 2              ; Set the length of the horizontal line
+                MOV             AL, '2'             ; Set the border character
+                CALL            printHorizontalLine ; Print the horizontal line
+                MOV             DX, [attemptPos]
+                CALL            setCursor
+
+    ; Print the ASCII string
+    MOV DX, OFFSET asciiBuffer + 2        ; Load the address of asciiBuffer into DX
+    MOV AH, 09h                      ; Set AH to 09h for DOS function: print string
+    INT 21h                          ; Run DOS interrupt 21h to print the string
+
+    POP CX
+    POP DX
+    POP AX
+    RET                              ; Return from the procedure
+ENDP
+
+PROC decrementAttempts
+    PUSH AX
+    MOV AX, [attemptCount]
+    DEC AX
+    MOV [attemptCount], AX
+    POP AX
+    RET
+ENDP
 ; ------------------------------- EOF ----------------------------------
