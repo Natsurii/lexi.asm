@@ -73,11 +73,29 @@ inputLoop:
                 CMP             AX, 5                   ; AX == 5? exit loop: continue loop
                 JNZ             inputLoop               ; Jump input loop if matched < 5
 
-win:            
-
+win:        
+                CALL            clearScreen         ; clear the screen
+                MOV             DX, 0800h           ; Move down the cursor
+                CALL            setCursor           ; run set cursor
+                
+                LEA             DX, [winASCII]      ; DX <- address of asciiArt
+                MOV             AH, 09h             ; DOS function: print string
+                INT             21h                 ; Run DOS interrupt
+                CALL            drawBorder          ; redraw the border
+                JMP             exitLoop            ; exit the loop
 lose:
+                CALL            clearScreen         ; clear the screen
+                MOV             DX, 0800h           ; Move down the cursor
+                CALL            setCursor           ; run set cursor
+                
+                LEA             DX, [loseASCII]      ; DX <- address of asciiArt
+                MOV             AH, 09h             ; DOS function: print string
+                INT             21h                 ; Run DOS interrupt
+                CALL            drawBorder          ; redraw the border
+                JMP             exitLoop            ; exit the loop
 
-exitLoop:
+exitLoop:   
+                CALL            waitForKeypress     ; wait for keypress
                 RET
 ENDP
 
@@ -307,4 +325,5 @@ PROC decrementAttempts
                 POP             AX
                 RET
 ENDP
+
 ; ------------------------------- EOF ----------------------------------

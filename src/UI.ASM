@@ -39,7 +39,28 @@ scrollArt       DB              "                     __________________________
                
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
 
+winASCII        DB              "                           .--------.", 10, 13
+                DB              "                         .'          '.", 10, 13
+                DB              "                        /   O      O   \", 10, 13
+                DB              "                       :                :", 10, 13
+                DB              "                       |                |          YOU WIN", 10, 13
+                DB              "                       : ',          ,' :    press any key to exit.", 10, 13
+                DB              "                        \  '-......-'  /", 10, 13
+                DB              "                         '.          .'", 10, 13
+                DB              "                           '-......-'", 10, 13
+                DB              "$"
 
+
+loseASCII       DB              "                           .--------.", 10, 13
+                DB              "                         .'          '.", 10, 13
+                DB              "                        /   O      O   \", 10, 13
+                DB              "                       :           `    :", 10, 13
+                DB              "                       |                |          YOU LOSE", 10, 13
+                DB              "                       :    .------.    :    press any key to exit.", 10, 13
+                DB              "                        \  (        )   /", 10, 13
+                DB              "                         '.          .'", 10, 13
+                DB              "                           '-......-'", 10, 13
+                DB              "$"
 ; -------------------------- CODE SEGMENT -----------------------------
 
                 CODESEG
@@ -168,5 +189,14 @@ PROC drawBorder
                 RET                                 ; Return from the procedure
 ENDP
 
+PROC winGameOver
 
+    RET
+ENDP
+
+
+PROC loseGameOver
+
+    RET
+ENDP
 ; ------------------------------- EOF ----------------------------------
