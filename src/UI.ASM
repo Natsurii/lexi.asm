@@ -17,26 +17,33 @@ asciiArt        DB              "                 .---.                         
                 DB              "$"
 
 scrollArt       DB              "                     ______________________________", 10, 13
-                DB              "                   / \                             \.", 10, 13
-                DB              "                  |   |      __           _        |.    WORD HISTORY:", 10, 13
-                DB              "                   \_ |     / /  _____  _(_)       |.", 10, 13
-                DB              "                      |    / /  / _ \ \/ / |       |.", 10, 13
-                DB              "                      |   / /__|  __/>  <| |       |.", 10, 13
-                DB              "                      |   \____/\___/_/\_\_|       |.", 10, 13
+                DB              "  Rules:           / \                             \.", 10, 13
+                DB              "  1. Guess a      |   |      __           _        |.    WORD HISTORY:", 10, 13
+                DB              "  a 5-letter word. \_ |     / /  _____  _(_)       |.", 10, 13
+                DB              "  2. Green indicates  |    / /  / _ \ \/ / |       |.", 10, 13
+                DB              "  correct letter in   |   / /__|  __/>  <| |       |.", 10, 13
+                DB              "  the right spot.     |   \____/\___/_/\_\_|       |.", 10, 13
+                DB              "  3. You have a       |                            |.", 10, 13
+                DB              "   maximum of 10      |   Level #:                 |.", 10, 13
+                DB              "  trials.             |   Attempt #:               |.", 10, 13
+                DB              "  4. Win by guessing  |                            |.", 10, 13
+                DB              "  the secret word     |                            |.", 10, 13
+                DB              "  in 10 trials or     |                            |.", 10, 13
+                DB              "  less, or the game   |                            |.", 10, 13
+                DB              "  ends.               |                            |.", 10, 13
                 DB              "                      |                            |.", 10, 13
-                DB              "                      |   Level #:                 |.", 10, 13
-                DB              "                      |   Attempt #:               |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "                      |   _________________________|___", 10, 13
-                DB              "                      |  /                            /.", 10, 13
-                DB              "                      \_/____________________________/.", 10, 13
+                DB              "  Hint: Use the word  |   _________________________|___", 10, 13
+                DB              "  history as clues!   |  /                            /.", 10, 13
+                DB              "                      |_/____________________________/.", 10, 13
                 DB              "$"
-               
+
+Rules:
+1. Each guess must be a 5-letter word.
+
+3. Maximum of 10 trials will be given.
+4. Guess the secret word within 10 trials to win, or else, the game will be over.
+
+Hint: Use the word history on the right screen as clues!           
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
 
 winASCII        DB              "                           .--------.", 10, 13
