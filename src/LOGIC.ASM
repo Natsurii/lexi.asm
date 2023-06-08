@@ -42,31 +42,36 @@ ENDP
 ;               DL: The column
 ; RETURN:       N/a
 PROC userInputLoop  
-                CALL        getWordFromChoice
-                CALL        printUserLevel
+                CALL            getWordFromChoice
+                CALL            printUserLevel
 inputLoop:      
-                CALL        print2DigitDecimal      ; Print number of attempts
-                MOV         DX, [inputPosition]     ; setCursor to (16,38)
-                CALL        setCursor               ; move cursor
-                CALL        readUserInput           ; Read the user input
-                CALL        convertToUppercase      ; convert user input to uppercase
+                CALL            print2DigitDecimal  ; Print number of attempts
 
-                MOV         DH, [printPosRow]
-                MOV         DL, [printPosCol]
-                CALL        compareLetters          ; compare user input to secret word
+                MOV             DX, [inputPosition] ; Set cursor to attempt POS
+                MOV             CX, 5               ; Set the length blank horizontal line
+                MOV             AL, ' '             ; Set the border character
+                CALL            printHorizontalLine ; Print the horizontal line
+                MOV             DX, [inputPosition] ; setCursor to (16,38)
+                CALL            setCursor           ; move cursor
+                CALL            readUserInput       ; Read the user input
+                CALL            convertToUppercase  ; convert user input to uppercase
 
-                INC         DH                      ; Increment the row
-                MOV         [printPosRow], DH       ; save the row new val to the var 
+                MOV             DH, [printPosRow]
+                MOV             DL, [printPosCol]
+                CALL            compareLetters      ; compare user input to secret word
+
+                INC             DH                  ; Increment the row
+                MOV             [printPosRow], DH   ; save the row new val to the var 
                 
-                CALL        decrementAttempts
-                MOV         AX, [attemptCount]
-                CMP         AX, 0
-                JZ          lose
+                CALL            decrementAttempts
+                MOV             AX, [attemptCount]
+                CMP             AX, 0
+                JZ              lose
 
                 ; if all letters matched, exit loop
-                MOV         AX, [correctLettersCount]; AX = correctLettersCount
-                CMP         AX, 5                   ; AX == 5? exit loop: continue loop
-                JNZ         inputLoop               ; Jump input loop if matched < 5
+                MOV             AX, [correctLettersCount]; AX = correctLettersCount
+                CMP             AX, 5                   ; AX == 5? exit loop: continue loop
+                JNZ             inputLoop               ; Jump input loop if matched < 5
 
 win:            
 
@@ -82,40 +87,40 @@ ENDP
 ;               secretWord DB(5)
 ; RETURN:       NONE
 PROC compareLetters
-                MOV         CX, 5                   ; Number of letters to compare
-                MOV         SI, OFFSET secretWord   ; Load secretWord index to SI
-                MOV         DI, OFFSET input        ; Load input index to DI
-                MOV         AX, 0                   ; Initialize correctLettersCount to 0
-                MOV         [correctLettersCount],AX; Reset the correct letters count
+                MOV             CX, 5                   ; Number of letters to compare
+                MOV             SI, OFFSET secretWord   ; Load secretWord index to SI
+                MOV             DI, OFFSET input        ; Load input index to DI
+                MOV             AX, 0                   ; Initialize correctLettersCount to 0
+                MOV             [correctLettersCount],AX; Reset the correct letters count
 
 compareLoop:
-                MOV         AL, [SI]                ; Load letter from secret
-                CMP         AL, [DI]                ; Compare with user input
+                MOV             AL, [SI]            ; Load letter from secret
+                CMP             AL, [DI]            ; Compare with user input
 
                 ; Set background color based on match or mismatch
-                JE          matchedLetter           ; IF matched, jump to matchedLetter
-                MOV         BL, [mismatchColor]     ; Background color
-                JMP         proceedPrint
+                JE              matchedLetter       ; IF matched, jump to matchedLetter
+                MOV             BL, [mismatchColor] ; Background color
+                JMP             proceedPrint
 
 matchedLetter:
-                MOV         BL, [matchColor]        ; Background color
-                CALL        incrementCorrectLetters ; Increment correctLettersCount
+                MOV             BL, [matchColor]    ; Background color
+                CALL            incrementCorrectLetters ; Increment correctLettersCount
 
 proceedPrint:
-                PUSH        CX                      ; preserve CX
-                INC         SI                      ; Move to next letter in secret word
-                MOV         AL, [DI]                ; Load letter from user input into AL
-                CALL        setCursor               ; change the cursor position
+                PUSH            CX                  ; preserve CX
+                INC             SI                  ; Move to next letter in secret word
+                MOV             AL, [DI]            ; Load letter from user input into AL
+                CALL            setCursor           ; change the cursor position
 
                 ; Print the current character
-                MOV         BH, 0                   ; Display page
-                MOV         CX, 1                   ; Number of times to write character
-                MOV         AH, 09h                 ; DOS Function: write char w/ attrib
-                INT         10h                     ; Call BIOS interrupt
-                INC         DI                      ; Move to next letter in user input
-                INC         DL                      ; Increment column
-                POP         CX                      ; Restore compareLoop Count
-                LOOP        compareLoop             ; Loop until all letters are compared
+                MOV             BH, 0               ; Display page
+                MOV             CX, 1               ; Number of times to write character
+                MOV             AH, 09h             ; DOS Function: write char w/ attrib
+                INT             10h                 ; Call BIOS interrupt
+                INC             DI                  ; Move to next letter in user input
+                INC             DL                  ; Increment column
+                POP             CX                  ; Restore compareLoop Count
+                LOOP            compareLoop         ; Loop until all letters are compared
                 RET                                 
 ENDP
 
@@ -125,11 +130,11 @@ ENDP
 ;               secretWord DB(5)
 ; RETURN:       NONE
 PROC incrementCorrectLetters
-                PUSH        AX                      ; Preserve data of AX
-                MOV         AX,[correctLettersCount]; AX = correctLettersCount
-                INC         AX                      ; AX = AX + 1
-                MOV         [correctLettersCount],AX; Store updated correctLettersCount
-                POP         AX                      ; Restore previous value of AX
+                PUSH            AX                      ; Preserve data of AX
+                MOV             AX,[correctLettersCount]; AX = correctLettersCount
+                INC             AX                      ; AX = AX + 1
+                MOV             [correctLettersCount],AX; Store updated correctLettersCount
+                POP             AX                      ; Restore previous value of AX
                 RET
 ENDP
 
@@ -139,39 +144,38 @@ ENDP
 ; OUTPUT:       secretWord DB(5) - The chosen string without the separator 
 ; RETURN:       NONE
 PROC getWordFromChoice
-                PUSH        SI                      ; Preserve SI,
-                PUSH        DI                      ; DI,
-                PUSH        AX                      ; AX,
-                PUSH        CX                      ; CX values to STACk
-                XOR         AX, AX                  ; Flush the value of AX
-                XOR         SI, SI                  ; and SI
-                LEA         SI, [ARRAY]             ; Load effective address offset
-                MOV         AX, [convertedNumber]   ; Move user input to AX
+                PUSH            SI                  ; Preserve SI,
+                PUSH            DI                  ; DI,
+                PUSH            AX                  ; AX,
+                PUSH            CX                  ; CX values to STACk
+                XOR             AX, AX              ; Flush the value of AX
+                XOR             SI, SI              ; and SI
+                LEA             SI, [ARRAY]         ; Load effective address offset
+                MOV             AX,[convertedNumber]; Move user input to AX
 
-                MOV         CX, 6                   ; each string has 5char + 1sep
-                IMUL        CX                      ; Offset = AX * 6
-                ADD         SI, AX                  ; Add SI to AX before addresaing
-                LEA         DI, [secretWord]        ; init DI to point secretWord
+                MOV             CX, 6               ; each string has 5char + 1sep
+                IMUL            CX                  ; Offset = AX * 6
+                ADD             SI, AX              ; Add SI to AX before addresaing
+                LEA             DI, [secretWord]    ; init DI to point secretWord
 
 ; Copy the string from ARRAY to secretWord until the separator is encountered
 CopyString:
-                MOV         AL, [SI]                ; Move a character from ARRAY to AL
-                CMP         AL, '$'                 ; Compare AL with the separator character
-                JE          EndOfString             ; If it's the separator, jump to EndOfString
-                MOV         [DI], AL                ; Move the character from AL to secretWord
-                INC         SI                      ; Increment SI to point to the next character in ARRAY
-                INC         DI                      ; Increment DI to point to the next character location in secretWord
-                JMP         CopyString              ; Jump back to CopyString to continue copying
+                MOV             AL, [SI]            ; Move a character from ARRAY to AL
+                CMP             AL, '$'             ; Compare AL with the separator character
+                JE              EndOfString         ; If it's the separator, jump to EndOfString
+                MOV             [DI], AL            ; Move the character from AL to secretWord
+                INC             SI                  ; Increment SI to point to the next character in ARRAY
+                INC             DI                  ; Increment DI to point to the next character location in secretWord
+                JMP             CopyString          ; Jump back to CopyString to continue copying
 EndOfString:
-                MOV         [DI], 0                 ; Add a null terminator to the secretWord
+                MOV             [DI], 0             ; Add a null terminator to the secretWord
 
-                POP         CX                      ; Retrieve CX,
-                POP         AX                      ; AX,
-                POP         DI                      ; DI,
-                POP         SI                      ; SI values from STACK
+                POP             CX                  ; Retrieve CX,
+                POP             AX                  ; AX,
+                POP             DI                  ; DI,
+                POP             SI                  ; SI values from STACK
                 RET
 ENDP
-
 
 ; -- getUserLvlInput PROCEDURE --
 ; DESC:         Reads user input, converts it to a decimal number and validates the range
@@ -227,29 +231,29 @@ convertDecDone:
 
                 ; Save the number into the variable
                 SUB             AX, 1               ; Make it 0-based array index
-                MOV             [convertedNumber],AX; save the 
-                JMP             exitProgram
+                MOV             [convertedNumber],AX; save the value to the variablee
+                JMP             exitProgram         ; Jump to exit
 
 inputError:
                 ; Display error message
-                LEA             DX, errorMessage
-                MOV             AH, 09h
-                INT             21h
-                JMP             startReading
+                LEA             DX, errorMessage    ; Load address of errorMessage string
+                MOV             AH, 09h             ; DOS Function: Print string
+                INT             21h                 ; Run DOS interrupt
+                JMP             startReading        ; Jump again to start
 
 exitProgram:
-                RET
+                RET                                 ; Return from procedure
 ENDP
 
 PROC printUserLevel
-    PUSH DX
-    MOV DX, [prntUsrLvlPos]
-    CALL setCursor
-    MOV DX, OFFSET inputBuffer + 2
-    MOV AH, 09h
-    INT 21h
-    POP DX
-    RET
+                PUSH            DX                  ; Preserve DX
+                MOV             DX, [prntUsrLvlPos] ; Get user lvl print position
+                CALL            setCursor           ; run getCursor interrupt
+                MOV             DX, OFFSET inputBuffer + 2; get the address of input
+                MOV             AH, 09h             ; DOS function: Print string
+                INT             21h                 ; Run DOS interrupt
+                POP             DX                  ; Restore the value of DX
+                RET                                 ; Return from procedure
 ENDP
 
 ; -- print2DigitDecimal PROCEDURE --
@@ -257,50 +261,50 @@ ENDP
 ; INPUT:        AX - 2-digit decimal number to be printed
 ; RETURN:       N/a
 PROC print2DigitDecimal
-    ; Prepare the buffer for the ASCII string
-    PUSH AX
-    PUSH DX
-    PUSH CX
+                ; Prepare the buffer for the ASCII string
+                PUSH            AX
+                PUSH            DX
+                PUSH            CX
 
-    MOV AX, [attemptCount]
-    LEA DI, [asciiBuffer]            ; Load the address of asciiBuffer into DI
-    MOV [DI], 2             ; Store the maximum string length at the beginning of the buffer
-    MOV [DI+1], 0           ; Set the current string length to 0
-    ADD DI, 2                        ; Move DI to the start of the string data
+                MOV             AX, [attemptCount]
+                LEA             DI, [asciiBuffer]   ; Load the address of asciiBuffer into DI
+                MOV             [DI], 2             ; Store the maximum string length at the beginning of the buffer
+                MOV             [DI+1], 0           ; Set the current string length to 0
+                ADD             DI, 2                        ; Move DI to the start of the string data
 
-    ; Convert the 2-digit decimal number to ASCII string
-    MOV CX, 10                       ; Set the divisor for the conversion
-    XOR DX, DX                       ; Clear DX for division
-    DIV CX                           ; Divide AX by 10: quotient in AX, remainder in DX
-    ADD DX, 30h                      ; Convert the remainder to ASCII
-    MOV [DI+1], DL                   ; Store the ASCII digit in the buffer (second digit)
-    ADD AX, 30h                      ; Convert the quotient to ASCII
-    MOV [DI], AL                     ; Store the ASCII digit in the buffer (first digit)
+                ; Convert the 2-digit decimal number to ASCII string
+                MOV             CX, 10              ; Set the divisor for the conversion
+                XOR             DX, DX              ; Clear DX for division
+                DIV             CX                  ; Divide AX by 10: quotient in AX, remainder in DX
+                ADD             DX, 30h             ; Convert the remainder to ASCII
+                MOV             [DI+1], DL          ; Store the ASCII digit in the buffer (second digit)
+                ADD             AX, 30h             ; Convert the quotient to ASCII
+                MOV             [DI], AL            ; Store the ASCII digit in the buffer (first digit)
 
-                MOV             DX, [attemptPos]          ; Set cursor to upper left corner
-                MOV             CX, 2              ; Set the length of the horizontal line
-                MOV             AL, '2'             ; Set the border character
+                MOV             DX, [attemptPos]    ; Set cursor to attempt POS
+                MOV             CX, 2               ; Set the length blank horizontal line
+                MOV             AL, ' '             ; Set the border character
                 CALL            printHorizontalLine ; Print the horizontal line
                 MOV             DX, [attemptPos]
                 CALL            setCursor
 
-    ; Print the ASCII string
-    MOV DX, OFFSET asciiBuffer + 2        ; Load the address of asciiBuffer into DX
-    MOV AH, 09h                      ; Set AH to 09h for DOS function: print string
-    INT 21h                          ; Run DOS interrupt 21h to print the string
+                ; Print the ASCII string
+                MOV             DX,OFFSET asciiBuffer+2 ; Load the address of asciiBuffer into DX
+                MOV             AH, 09h             ; Set AH to 09h for DOS function: print string
+                INT             21h                 ; Run DOS interrupt 21h to print the string
 
-    POP CX
-    POP DX
-    POP AX
-    RET                              ; Return from the procedure
+                POP             CX
+                POP             DX
+                POP             AX
+                RET                                 ; Return from the procedure
 ENDP
 
 PROC decrementAttempts
-    PUSH AX
-    MOV AX, [attemptCount]
-    DEC AX
-    MOV [attemptCount], AX
-    POP AX
-    RET
+                PUSH            AX
+                MOV             AX, [attemptCount]
+                DEC             AX
+                MOV             [attemptCount], AX
+                POP             AX
+                RET
 ENDP
 ; ------------------------------- EOF ----------------------------------
