@@ -8,7 +8,7 @@ inputBuffer     DB              6,?,6 dup ('$')     ; Buffer to store the user i
 secretWord      DB              6 dup(?), '$'       ; Temporary secret word
 matchColor      DB 2Fh                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
-inputPosition   DW 1020h                            ; Row 16, Column 16
+inputPosition   DW 1026h                            ; Row 16, Column 38
 printPosRow     DB 07h          
 printPosCol     DB 41h
 
@@ -20,8 +20,8 @@ inputMessage    db 13,10,'Enter a level number (1-3100): $'
 errorMessage    db 13,10,'Invalid input! Enter a decimal integer between 1 and 3100: $'
 convertedNumber dw ?                                ; Variable to store the converted decimal number
 printableLvl    DB 6,?,6 dup ('$')
-prntUsrLvlPos   DW 0B26h  
-attemptPos      DW 0C26h                         
+prntUsrLvlPos   DW 0B2Ch  
+attemptPos      DW 0C2Ch                         
 ; ---------------------------- CODE SEGMENT ---------------------------
  
                 CODESEG
