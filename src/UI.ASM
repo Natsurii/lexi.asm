@@ -36,14 +36,7 @@ scrollArt       DB              "                     __________________________
                 DB              "  history as clues!   |  /                            /.", 10, 13
                 DB              "                      |_/____________________________/.", 10, 13
                 DB              "$"
-
-Rules:
-1. Each guess must be a 5-letter word.
-
-3. Maximum of 10 trials will be given.
-4. Guess the secret word within 10 trials to win, or else, the game will be over.
-
-Hint: Use the word history on the right screen as clues!           
+                        
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
 
 winASCII        DB              "                           .--------.", 10, 13
