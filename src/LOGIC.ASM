@@ -10,7 +10,7 @@ matchColor      DB 2Fh                              ; Green background color
 mismatchColor   DB 08h                              ; Grey background color
 inputPosition   DW 1020h                            ; Row 16, Column 16
 printPosRow     DB 07h          
-printPosCol     DB 3Ch
+printPosCol     DB 41h
 
 attemptCount    DW 10
 asciiBuffer     DB 3, 0, 3 DUP('$') ; Buffer for the ASCII string: max length, current length, string data

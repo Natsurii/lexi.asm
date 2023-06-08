@@ -16,25 +16,25 @@ asciiArt        DB              "             .---.                             
                 DB              "                                     '----'       '----'  ", 10, 13
                 DB              "$"
 
-scrollArt       DB              "                     ______________________________", 10, 13
-                DB              "  Rules:           / \                             \.", 10, 13
-                DB              "  1. Guess a      |   |      __           _        |.    WORD HISTORY:", 10, 13
-                DB              "  a 5-letter word. \_ |     / /  _____  _(_)___    |.", 10, 13
-                DB              "  2. Green indicates  |    / /  / _ \ \/ / / __|   |.", 10, 13
-                DB              "  correct letter in   |   / /__|  __/>  <| \__ \   |.", 10, 13
-                DB              "  the right spot.     |   \____/\___/_/\_\_|___/   |.", 10, 13
-                DB              "  3. You have a       |                            |.", 10, 13
-                DB              "   maximum of 10      |   Level #:                 |.", 10, 13
-                DB              "  trials.             |   Attempt #:               |.", 10, 13
-                DB              "  4. Win by guessing  |                            |.", 10, 13
-                DB              "  the secret word     |                            |.", 10, 13
-                DB              "  in 10 trials or     |                            |.", 10, 13
-                DB              "  less, or the game   |                            |.", 10, 13
-                DB              "  ends.               |                            |.", 10, 13
-                DB              "                      |                            |.", 10, 13
-                DB              "  Hint: Use the word  |   _________________________|___", 10, 13
-                DB              "  history as clues!   |  /                            /.", 10, 13
-                DB              "                      |_/____________________________/.", 10, 13
+scrollArt       DB              "                         ______________________________", 10, 13
+                DB              "  Rules:               / \                             \.", 10, 13
+                DB              "  1. Guess a          |   |      __           _        |.     WORD HISTORY:", 10, 13
+                DB              "  a 5-letter word.     \_ |     / /  _____  _(_)___    |.", 10, 13
+                DB              "  2. Green indicates      |    / /  / _ \ \/ / / __|   |.", 10, 13
+                DB              "  correct letter in       |   / /__|  __/>  <| \__ \   |.", 10, 13
+                DB              "  the right spot.         |   \____/\___/_/\_\_|___/   |.", 10, 13
+                DB              "  3. You have a           |                            |.", 10, 13
+                DB              "  maximum of 10           |   Level #:                 |.", 10, 13
+                DB              "  trials.                 |   Attempt #:               |.", 10, 13
+                DB              "  4. Win by guessing      |                            |.", 10, 13
+                DB              "  the secret word         |                            |.", 10, 13
+                DB              "  in 10 trials or         |                            |.", 10, 13
+                DB              "  less, or the game       |                            |.", 10, 13
+                DB              "  ends.                   |                            |.", 10, 13
+                DB              "                          |                            |.", 10, 13
+                DB              "  Hint: Use the word      |   _________________________|___", 10, 13
+                DB              "  history as clues!       |  /                            /.", 10, 13
+                DB              "                          |_/____________________________/.", 10, 13
                 DB              "$"
                         
 anyKeyPrompt    DB              10, 13, 10, 13, "           Press any key to continue...",10 ,13, '$'
